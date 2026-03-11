@@ -1,4 +1,10 @@
+"use client"
+
+import { useState } from "react";
+
 export default function SearchPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-black text-white">Search</h1>
@@ -9,11 +15,19 @@ export default function SearchPage() {
           type="text" 
           placeholder="Search for anything..." 
           className="w-full bg-white/5 border-2 border-black p-4 rounded-xl text-white focus:border-[#00f7ff] transition-all outline-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 font-mono text-xs">
            CMD + K
         </div>
       </div>
+      
+      {searchQuery && (
+        <div className="p-8 border-dashed border-2 border-white/10 rounded-xl text-center text-white/40">
+          Searching for "{searchQuery}"...
+        </div>
+      )}
     </div>
   )
 }

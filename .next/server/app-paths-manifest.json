@@ -1,8 +1,1 @@
-{
-  "/page": "app/page.js",
-  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
-  "/(dashboard)/documents/page": "app/(dashboard)/documents/page.js",
-  "/(dashboard)/ai-workspace/page": "app/(dashboard)/ai-workspace/page.js",
-  "/(dashboard)/collaboration/page": "app/(dashboard)/collaboration/page.js",
-  "/(dashboard)/search/page": "app/(dashboard)/search/page.js"
-}
+{}
