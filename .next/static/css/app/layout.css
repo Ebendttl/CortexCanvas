@@ -732,6 +732,15 @@ video {
 .h-screen {
   height: 100vh;
 }
+.h-1 {
+  height: 0.25rem;
+}
+.h-12 {
+  height: 3rem;
+}
+.h-3\.5 {
+  height: 0.875rem;
+}
 .max-h-80 {
   max-height: 20rem;
 }
@@ -788,6 +797,12 @@ video {
 }
 .w-px {
   width: 1px;
+}
+.w-1 {
+  width: 0.25rem;
+}
+.w-3\.5 {
+  width: 0.875rem;
 }
 .min-w-0 {
   min-width: 0px;
@@ -910,6 +925,9 @@ video {
 }
 .gap-6 {
   gap: 1.5rem;
+}
+.gap-1\.5 {
+  gap: 0.375rem;
 }
 .space-y-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -1175,6 +1193,9 @@ video {
 .p-8 {
   padding: 2rem;
 }
+.p-5 {
+  padding: 1.25rem;
+}
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -1237,6 +1258,12 @@ video {
 .pt-4 {
   padding-top: 1rem;
 }
+.pb-20 {
+  padding-bottom: 5rem;
+}
+.pr-4 {
+  padding-right: 1rem;
+}
 .text-left {
   text-align: left;
 }
@@ -1291,6 +1318,9 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-\[11px\] {
+  font-size: 11px;
 }
 .font-black {
   font-weight: 900;
@@ -1371,6 +1401,9 @@ video {
 }
 .text-white\/90 {
   color: rgb(255 255 255 / 0.9);
+}
+.text-\[\#00f7ff\]\/60 {
+  color: rgb(0 247 255 / 0.6);
 }
 .placeholder-white\/30::-moz-placeholder {
   color: rgb(255 255 255 / 0.3);
@@ -1576,6 +1609,16 @@ body {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.hover\:translate-x-\[2px\]:hover {
+  --tw-translate-x: 2px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hover\:translate-y-\[2px\]:hover {
+  --tw-translate-y: 2px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .hover\:scale-105:hover {
   --tw-scale-x: 1.05;
   --tw-scale-y: 1.05;
@@ -1594,6 +1637,10 @@ body {
 .hover\:border-\[\#6b00ff\]:hover {
   --tw-border-opacity: 1;
   border-color: rgb(107 0 255 / var(--tw-border-opacity, 1));
+}
+
+.hover\:border-\[\#00f7ff\]\/30:hover {
+  border-color: rgb(0 247 255 / 0.3);
 }
 
 .hover\:bg-\[\#00f7ff\]:hover {
@@ -1737,6 +1784,13 @@ body {
 
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
