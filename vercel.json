@@ -1,0 +1,11 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "prisma generate && next build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "regions": ["sfo1"],
+  "env": {
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "OPENAI_API_KEY": "@openai_api_key",
+    "DATABASE_URL": "@database_url"
+  }
+}
