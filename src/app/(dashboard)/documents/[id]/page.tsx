@@ -4,11 +4,12 @@ import { NeobrutalistButton } from "@/components/ui/NeobrutalistButton";
 import { BlockEditor } from "@/features/editor/BlockEditor";
 import { ChevronLeft, MoreHorizontal, Sparkles } from "lucide-react";
 import { AIAssistantPanel } from "@/features/ai-assistant/AIAssistantPanel";
-import { useState } from "react";
+import { useState, use } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export default function DocumentPage({ params }: { params: { id: string } }) {
+export default function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   return (
@@ -63,7 +64,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
 
              <div className="px-4">
                 <BlockEditor 
-                  documentId={params.id} 
+                  documentId={id} 
                   user={{
                     name: "Visitor" + Math.floor(Math.random() * 100),
                     color: "#" + Math.floor(Math.random()*16777215).toString(16)
@@ -77,7 +78,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
         {isAssistantOpen && (
           <aside className="w-96 flex-shrink-0 animate-in slide-in-from-right duration-300">
             <AIAssistantPanel 
-              documentId={params.id} 
+              documentId={id} 
               onClose={() => setIsAssistantOpen(false)} 
             />
           </aside>

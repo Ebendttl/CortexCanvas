@@ -98,11 +98,12 @@ export function BlockEditor({ documentId, user, content, onChange, editable = tr
 
   const editor = useEditor({
     editable,
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: false,
         codeBlock: false,
-        history: false, // Collaboration handles history
+        undoRedo: false, // Collaboration handles history
       }),
       Heading.configure({ levels: [1, 2, 3] }),
       Placeholder.configure({
