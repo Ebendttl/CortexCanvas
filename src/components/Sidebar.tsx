@@ -52,14 +52,30 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t-2 border-black space-y-2">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all font-bold">
+        <Link 
+          href="/settings"
+          className={cn(
+            "flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent",
+            pathname === "/settings"
+              ? "bg-[#00f7ff] text-black border-black shadow-neobrutalist"
+              : "text-white/70 hover:text-white hover:bg-white/5"
+          )}
+        >
           <Settings className="w-5 h-5" />
           Settings
-        </button>
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all font-bold">
+        </Link>
+        <Link 
+          href="/help"
+          className={cn(
+            "flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent",
+            pathname === "/help"
+              ? "bg-[#00f7ff] text-black border-black shadow-neobrutalist"
+              : "text-white/70 hover:text-white hover:bg-white/5"
+          )}
+        >
           <HelpCircle className="w-5 h-5" />
           Help & Support
-        </button>
+        </Link>
       </div>
     </aside>
   );

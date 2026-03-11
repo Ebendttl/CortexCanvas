@@ -14,17 +14,24 @@ import { GlassPanel } from '@/components/ui/GlassPanel'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 
+import { useCommandPalette } from '@/lib/store'
+
 export function CommandPalette() {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, setIsOpen, toggle } = useCommandPalette(state => ({
+    isOpen: state.isOpen,
+    setIsOpen: (open: boolean) => open ? state.open() : state.close(),
+    toggle: state.toggle
+  }))
   const [query, setQuery] = useState('')
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setIsOpen((open) => !open)
+        toggle()
       }
     }
+// ... rest is same
 
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)

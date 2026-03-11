@@ -1,6 +1,7 @@
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeobrutalistButton } from "@/components/ui/NeobrutalistButton";
 import { Plus, FileText, BrainCircuit, Activity } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
@@ -10,10 +11,12 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-black text-white">Welcome back, Explorer</h1>
           <p className="text-white/60 mt-2 text-lg">Your AI-powered knowledge workspace is ready.</p>
         </div>
-        <NeobrutalistButton variant="primary" size="lg" className="flex items-center gap-2">
-          <Plus className="w-5 h-5" />
-          New Document
-        </NeobrutalistButton>
+        <Link href="/documents">
+          <NeobrutalistButton variant="primary" size="lg" className="flex items-center gap-2">
+            <Plus className="w-5 h-5" />
+            New Document
+          </NeobrutalistButton>
+        </Link>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -26,9 +29,14 @@ export default function DashboardPage() {
           </div>
           <ul className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <li key={i} className="group flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all cursor-pointer">
-                <span className="text-white/80 font-medium group-hover:text-[#00f7ff]">Strategic Planning 2026</span>
-                <span className="text-white/40 text-xs text-right">2h ago</span>
+              <li key={i}>
+                <Link 
+                  href={`/documents/${i}`}
+                  className="group flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all"
+                >
+                  <span className="text-white/80 font-medium group-hover:text-[#00f7ff]">Strategic Planning 202{i + 5}</span>
+                  <span className="text-white/40 text-xs text-right">{i}h ago</span>
+                </Link>
               </li>
             ))}
           </ul>

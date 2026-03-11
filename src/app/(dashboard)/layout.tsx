@@ -1,10 +1,15 @@
+"use client"
+
 import { Sidebar } from "@/components/Sidebar";
+import { useCommandPalette } from "@/lib/store";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const toggleSearch = useCommandPalette(state => state.toggle);
+
   return (
     <div className="flex h-screen bg-[#0a0a0a] overflow-hidden">
       <Sidebar />
@@ -15,8 +20,13 @@ export default function DashboardLayout({
             <h2 className="text-lg font-bold text-white/90">Dashboard</h2>
           </div>
           <div className="flex items-center gap-6">
-             {/* Search trigger or User profile */}
-             <div className="hidden md:flex text-sm font-medium text-white/50 bg-white/5 px-3 py-1.5 rounded-md border border-white/10 group cursor-pointer hover:border-[#00f7ff]/50 transition-colors">
+             {/* Search trigger */}
+             <div 
+                onClick={toggleSearch}
+                role="button"
+                className="hidden md:flex text-sm font-medium text-white/50 bg-white/5 px-3 py-1.5 rounded-md border border-white/10 group cursor-pointer hover:border-[#00f7ff]/50 transition-colors"
+                title="Cmd + K to search"
+             >
                 <span className="group-hover:text-[#00f7ff]">Cmd + K to search</span>
              </div>
              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00f7ff] to-[#6b00ff] border-2 border-black shadow-neobrutalist"></div>
