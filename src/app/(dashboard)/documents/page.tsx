@@ -1,7 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react";
-import { FileText, Plus, Clock, MoreVertical, Search } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { FileText, Plus, Clock, MoreVertical, Search, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Document {
@@ -15,9 +15,36 @@ interface Document {
 export default function DocumentsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeMenuId && !(event.target as Element).closest('.document-menu-container')) {
+        setActiveMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activeMenuId]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDelete = async (id: string) => {
+    // Optimistic UI update
+    setDocuments(prev => prev.filter(doc => doc.id !== id));
+    setActiveMenuId(null);
+
+    try {
+      await fetch(`/api/documents/${id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete document:", error);
+      // In a real app, we might want to revert the UI state here or show an error toast
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,9 +112,32 @@ export default function DocumentsPage() {
                 <div className="w-12 h-12 bg-[#00f7ff]/10 rounded-xl flex items-center justify-center">
                   <FileText className="w-6 h-6 text-[#00f7ff]" />
                 </div>
-                <button className="p-1 hover:bg-white/10 rounded-lg transition-colors">
-                  <MoreVertical className="w-5 h-5 text-white/40" />
-                </button>
+                <div className="relative document-menu-container">
+                  <button 
+                    onClick={() => setActiveMenuId(activeMenuId === doc.id ? null : doc.id)}
+                    className={cn(
+                      "p-1 hover:bg-white/10 rounded-lg transition-colors",
+                      activeMenuId === doc.id && "bg-white/10 text-white"
+                    )}
+                  >
+                    <MoreVertical className={cn(
+                      "w-5 h-5 transition-colors",
+                      activeMenuId === doc.id ? "text-white" : "text-white/40"
+                    )} />
+                  </button>
+
+                  {activeMenuId === doc.id && (
+                    <div className="absolute right-0 mt-2 w-48 bg-[#0a0a0a] border-2 border-black rounded-xl shadow-neobrutalist z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
+                      <button 
+                        onClick={() => handleDelete(doc.id)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-500/10 transition-colors text-left"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="font-bold">Delete Document</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               
               <div>
