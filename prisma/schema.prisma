@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -25,12 +25,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -54,17 +54,18 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum ProcessingStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-}
+// SQLite doesn't support enums natively, using String with defaults
+// enum ProcessingStatus {
+//   PENDING
+//   PROCESSING
+//   COMPLETED
+//   FAILED
+// }
 
 model Document {
   id            String           @id @default(cuid())
   title         String           @default("Untitled")
-  content       Json?
+  content       String?
   ownerId       String
   owner         User             @relation(fields: [ownerId], references: [id])
   blocks        DocumentBlock[]
@@ -72,10 +73,10 @@ model Document {
   versions      DocumentVersion[]
   activities    Activity[]
   tags          Tag[]
-  summary       String?          @db.Text
-  keyInsights   Json?            // Array of strings
+  summary       String?
+  keyInsights   String?            // Array of strings
   category      String?
-  status        ProcessingStatus @default(PENDING)
+  status        String           @default("PENDING")
   fileType      String?
   fileSize      Int?
   fileUrl       String?
@@ -87,7 +88,7 @@ model DocumentVersion {
   id         String   @id @default(cuid())
   documentId String
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  content    Json?
+  content    String?
   fileUrl    String?
   version    Int
   createdAt  DateTime @default(now())
@@ -106,7 +107,7 @@ model Activity {
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   userId     String
   type       String   // UPLOADED, EDITED, VIEWED, DELETED, SHARED, AI_PROCESSED
-  metadata   Json?
+  metadata   String?
   createdAt  DateTime @default(now())
 }
 
@@ -115,7 +116,7 @@ model DocumentBlock {
   documentId String
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   type       String
-  content    Json
+  content    String
   position   Int
 }
 
@@ -123,6 +124,6 @@ model Embedding {
   id         String   @id @default(cuid())
   documentId String
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  vector     Unsupported("vector")?
-  textChunk  String   @db.Text
+  vector     String?
+  textChunk  String
 }
