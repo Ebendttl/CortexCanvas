@@ -1,14 +1,1 @@
-{
-  "app/(dashboard)/documents/page.tsx -> @/components/DocumentViewer": {
-    "id": "app/(dashboard)/documents/page.tsx -> @/components/DocumentViewer",
-    "files": [
-      "static/chunks/_app-pages-browser_src_components_DocumentViewer_tsx.js"
-    ]
-  },
-  "components/DocumentViewer.tsx -> react-pdf": {
-    "id": "components/DocumentViewer.tsx -> react-pdf",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_react-pdf_dist_index_js.js"
-    ]
-  }
-}
+{}
