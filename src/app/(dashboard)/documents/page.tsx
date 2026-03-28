@@ -30,6 +30,7 @@ interface Document {
   keyInsights?: string[];
   tags?: string[];
   category?: string;
+  url?: string;
 }
 
 const CATEGORIES = ["All", "Legal", "Engineering", "Product", "Research"];
@@ -63,7 +64,8 @@ export default function DocumentsPage() {
           summary: d.summary || undefined,
           keyInsights: typeof d.keyInsights === 'string' ? JSON.parse(d.keyInsights) : d.keyInsights,
           tags: d.tags?.map((t: any) => t.name) || [],
-          category: d.category || "General"
+          category: d.category || "General",
+          url: d.fileUrl || undefined
         }));
         setDocuments(mapped);
       } catch (error) {

@@ -8,6 +8,8 @@ import { openai } from "@ai-sdk/openai";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import fs from "fs/promises";
+import path from "path";
 
 // pdf-parse doesn't have good ESM types, using a more stable approach
 const pdf = require("pdf-parse");
@@ -54,7 +56,7 @@ async function getDevSession() {
 
 export async function handleDelete(id: string) {
   await checkDatabaseConnection();
-  await headers(); // Primary headers for Next.js 15 async compliance
+  const headerList = await headers(); // Next.js 15 async compliance
   let session = await auth();
 
   if (!session?.user?.id && process.env.NODE_ENV === "development") {
@@ -87,7 +89,7 @@ export async function handleDelete(id: string) {
 export async function uploadDocument(formData: FormData) {
   console.log("SERVER: uploadDocument started");
   await checkDatabaseConnection();
-  await headers(); // Primary headers for Next.js 15 async compliance
+  const headerList = await headers(); // Next.js 15 async compliance
   let session = await auth();
   
   if (!session?.user?.id && process.env.NODE_ENV === "development") {
@@ -111,11 +113,18 @@ export async function uploadDocument(formData: FormData) {
   
   // 1. Create Record
   console.log("SERVER: Creating database record...");
+  const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+  const filePath = path.join(process.cwd(), "public", "uploads", fileName);
+  const fileUrl = `/uploads/${fileName}`;
+
+  await fs.writeFile(filePath, buffer);
+
   const doc = await (prisma as any).document.create({
     data: {
       title: file.name,
       fileSize: file.size,
       fileType: file.type || file.name.split('.').pop() || "unknown",
+      fileUrl: fileUrl,
       ownerId: session.user.id,
       status: "PROCESSING",
     },
@@ -147,7 +156,7 @@ export async function getDocuments() {
   console.log("SERVER: getDocuments started");
   try {
     await checkDatabaseConnection();
-    await headers(); // Primary headers for Next.js 15 async compliance
+    const headerList = await headers(); // Next.js 15 async compliance
     let session = await auth();
 
     if (!session?.user?.id && process.env.NODE_ENV === "development") {

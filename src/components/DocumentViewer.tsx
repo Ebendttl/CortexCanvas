@@ -11,11 +11,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 
-// We'll import these dynamically inside the component to be absolutely safe
-// even with "ssr: false" in the parent.
-let PDFDocument: any = null;
-let Page: any = null;
-let pdfjs: any = null;
 
 interface DocumentViewerProps {
   document: {
@@ -37,33 +32,37 @@ export function DocumentViewer({ document: doc, isOpen, onClose }: DocumentViewe
   const [pageNumber, setPageNumber] = useState(1);
   const [chatInput, setChatInput] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // PDF Rendering States
+  const [PDFComponents, setPDFComponents] = useState<{
+    Document: any;
+    Page: any;
+  } | null>(null);
+
   const [messages, setMessages] = useState<{ role: "user" | "ai", text: string }[]>([
     { role: "ai", text: `I've finished analyzing **${doc.name}**. How can I help you extract value from this intelligence?` }
   ]);
 
   useEffect(() => {
-    // Aggressive dynamic loading on client side only
-    const loadPdfLibraries = async () => {
-      if (typeof window !== "undefined") {
+    if (isOpen) {
+      setIsLoaded(true);
+      
+      // Attempt 3: Dynamic Evaluation Bypass
+      // Load PDF components only on client-side after mount to avoid Webpack-eval evaluation crash
+      const initPDF = async () => {
         try {
-          const reactPdf = await import('react-pdf');
-          PDFDocument = reactPdf.Document;
-          Page = reactPdf.Page;
-          pdfjs = reactPdf.pdfjs;
+          const { Document: PDFDoc, Page: PDFPage, pdfjs } = await import('react-pdf');
           
-          // Use the worker from the local node_modules via CDN if possible, 
-          // but version-locked to the library's version.
+          // Configure worker
           pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
           
-          setIsLoaded(true);
+          setPDFComponents({ Document: PDFDoc, Page: PDFPage });
         } catch (error) {
-          console.error("Failed to load PDF libraries:", error);
+          console.error("Neural Link Failure: PDF engine could not be initialized.", error);
         }
-      }
-    };
-
-    if (isOpen) {
-      loadPdfLibraries();
+      };
+      
+      initPDF();
     }
   }, [isOpen]);
 
@@ -165,8 +164,7 @@ export function DocumentViewer({ document: doc, isOpen, onClose }: DocumentViewe
                 {/* Preview Content */}
                 <div className="flex-1 overflow-y-auto p-10 custom-scrollbar flex justify-center">
                    {activeTab === "preview" ? (
-                     <div className="w-full max-w-4xl bg-white/5 rounded-3xl border-2 border-white/5 min-h-full p-8 shadow-inner overflow-hidden relative">
-                        {/* Mock/Real PDF Viewer UI */}
+                     <div className="w-full max-w-4xl bg-white/5 rounded-3xl border-2 border-white/5 min-h-full p-8 shadow-inner overflow-hidden relative flex flex-col items-center">
                         {!isLoaded ? (
                           <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
                              <div className="w-20 h-20 bg-[#00f7ff]/10 rounded-3xl flex items-center justify-center animate-pulse">
@@ -175,11 +173,63 @@ export function DocumentViewer({ document: doc, isOpen, onClose }: DocumentViewe
                              <h3 className="text-xl font-black text-white">Advanced Content Engine</h3>
                              <p className="text-white/40 max-w-sm text-sm">Visualizing document streams and extracting core knowledge clusters...</p>
                           </div>
+                        ) : doc.url ? (
+                          <>
+                            <div className="flex-1 w-full flex justify-center overflow-auto custom-scrollbar bg-black/20 rounded-2xl border border-white/5 shadow-2xl">
+                                {PDFComponents ? (
+                                  <PDFComponents.Document
+                                    file={doc.url}
+                                    onLoadSuccess={onDocumentLoadSuccess}
+                                    loading={
+                                      <div className="flex items-center justify-center p-20">
+                                         <Brain className="w-12 h-12 text-[#00f7ff] animate-pulse" />
+                                      </div>
+                                    }
+                                  >
+                                    <PDFComponents.Page 
+                                      pageNumber={pageNumber} 
+                                      width={800}
+                                      renderTextLayer={false}
+                                      renderAnnotationLayer={false}
+                                      className="shadow-2xl"
+                                    />
+                                  </PDFComponents.Document>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                                     <Zap className="w-12 h-12 text-[#00f7ff] animate-spin" />
+                                     <p className="text-[10px] font-black uppercase tracking-widest text-[#00f7ff]/60">Connecting Neural Stream...</p>
+                                  </div>
+                                )}
+                            </div>
+                            
+                            {/* Pagination Controls */}
+                            <div className="mt-6 flex items-center gap-6 bg-black/40 px-6 py-2 rounded-2xl border-2 border-black">
+                              <button 
+                                disabled={pageNumber <= 1}
+                                onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                                className="p-2 hover:bg-[#00f7ff]/20 rounded-lg text-white/40 hover:text-[#00f7ff] disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                              >
+                                <ChevronLeft className="w-6 h-6" />
+                              </button>
+                              <span className="text-[10px] font-black uppercase tracking-widest text-white/60 min-w-20 text-center">
+                                Unit {pageNumber} <span className="text-white/20 mx-1">/</span> {numPages || '--'}
+                              </span>
+                              <button 
+                                disabled={pageNumber >= (numPages || 1)}
+                                onClick={() => setPageNumber(p => Math.min(numPages || 1, p + 1))}
+                                className="p-2 hover:bg-[#00f7ff]/20 rounded-lg text-white/40 hover:text-[#00f7ff] disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+                              >
+                                <ChevronRight className="w-6 h-6" />
+                              </button>
+                            </div>
+                          </>
                         ) : (
-                          <div className="flex flex-col items-center space-y-4 overflow-hidden">
-                             <div className="w-full h-auto min-h-[500px] rounded-2xl bg-black/40 border-2 border-black flex items-center justify-center p-10">
-                                <span className="text-white/10 font-black uppercase tracking-widest text-4xl transform -rotate-12 select-none">Preview Engine Ready</span>
+                          <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
+                             <div className="w-20 h-20 bg-[#00f7ff]/10 rounded-3xl flex items-center justify-center">
+                                <FileText className="w-10 h-10 text-[#00f7ff]" />
                              </div>
+                             <h3 className="text-xl font-black text-white">Visual Preview Ready</h3>
+                             <p className="text-white/40 max-w-sm text-sm">This document is ready for visualization. Upgrade to the high-bandwidth neural link to enable real-time rendering.</p>
                           </div>
                         )}
                      </div>
