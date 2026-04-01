@@ -15,7 +15,7 @@ export const Commands = Extension.create({
     }
   },
 
-  addProsemirrorPlugins() {
+  addProseMirrorPlugins() {
     return [
       Suggestion({
         editor: this.editor,

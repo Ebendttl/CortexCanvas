@@ -11,8 +11,10 @@ import {
   PlusCircle, 
   LayoutDashboard,
   BrainCircuit,
-  Users
+  Users,
+  LogOut
 } from "lucide-react";
+import { logout } from "@/app/auth/actions";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -76,6 +78,15 @@ export function Sidebar() {
           <HelpCircle className="w-5 h-5" />
           Help & Support
         </Link>
+        <form action={logout}>
+          <button 
+            type="submit"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent text-white/70 hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/20"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+        </form>
       </div>
     </aside>
   );

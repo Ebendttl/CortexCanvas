@@ -1,6 +1,7 @@
 "use client"
 
-import { BubbleMenu, Editor } from '@tiptap/react'
+import { Editor } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
 import { 
   Sparkles, 
   Type, 
@@ -29,7 +30,7 @@ export function AIBubbleMenu({ editor, onAction }: AIBubbleMenuProps) {
   return (
     <BubbleMenu 
       editor={editor} 
-      tippyOptions={{ duration: 100 }}
+      options={{}}
       shouldShow={({ editor, from, to }) => {
         // Only show when there is a selection
         return from !== to

@@ -10,14 +10,14 @@ export default function Home() {
         AI-Powered Knowledge Workspace
       </p>
       <div className="mt-8 flex gap-4">
-        <Link href="/dashboard">
-          <button className="px-6 py-3 bg-[#00f7ff] text-black font-bold border-2 border-black shadow-neobrutalist hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-neobrutalist-hover transition-all">
+        <Link href="/auth/signup">
+          <button className="px-6 py-3 bg-[#00f7ff] text-black font-bold border-2 border-black shadow-neobrutalist hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-neobrutalist-hover transition-all text-sm uppercase tracking-wider">
             Get Started
           </button>
         </Link>
-        <Link href="#features">
-          <button className="px-6 py-3 glass rounded-lg border border-white/20 hover:bg-white/20 transition-all">
-            Learn More
+        <Link href="/auth/login">
+          <button className="px-6 py-3 glass rounded-lg border border-white/10 hover:bg-white/5 transition-all text-sm uppercase tracking-wider text-white/70 hover:text-white">
+            Sign In
           </button>
         </Link>
       </div>
