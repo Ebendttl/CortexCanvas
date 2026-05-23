@@ -24,11 +24,20 @@ const navItems = [
   { name: "Search", href: "/search", icon: Search },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  className?: string;
+  onClose?: () => void;
+}
+
+export function Sidebar({ className, onClose }: SidebarProps) {
   const pathname = usePathname();
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className="w-64 border-r-2 border-black bg-[#0a0a0a] flex flex-col h-screen sticky top-0">
+    <aside className={cn("w-64 border-r-2 border-black bg-[#0a0a0a] flex flex-col h-screen sticky top-0", className)}>
       <div className="p-6 border-b-2 border-black">
         <h1 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#00f7ff] to-[#6b00ff]">
           CortexCanvas
@@ -40,6 +49,7 @@ export function Sidebar() {
           <Link
             key={item.name}
             href={item.href}
+            onClick={handleLinkClick}
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent",
               pathname === item.href
@@ -56,6 +66,7 @@ export function Sidebar() {
       <div className="p-4 border-t-2 border-black space-y-2">
         <Link 
           href="/settings"
+          onClick={handleLinkClick}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent",
             pathname === "/settings"
@@ -68,6 +79,7 @@ export function Sidebar() {
         </Link>
         <Link 
           href="/help"
+          onClick={handleLinkClick}
           className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent",
             pathname === "/help"
@@ -78,7 +90,7 @@ export function Sidebar() {
           <HelpCircle className="w-5 h-5" />
           Help & Support
         </Link>
-        <form action={logout}>
+        <form action={logout} onSubmit={handleLinkClick}>
           <button 
             type="submit"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border-2 border-transparent text-white/70 hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/20"

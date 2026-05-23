@@ -1,31 +1,57 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
+import { createMockClient } from './mockClient'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const isMockNeeded = !supabaseUrl || 
+    supabaseUrl.includes("mpwoecfookkoexalgmsr") || 
+    supabaseUrl.includes("your-project-url");
+
+  let supabase;
+  if (isMockNeeded) {
+    supabase = createMockClient({
+      get(name) {
+        return request.cookies.get(name)?.value;
       },
-    }
-  )
+      set(name, value, options) {
+        request.cookies.set(name, value);
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        supabaseResponse.cookies.set(name, value, options);
+      },
+      delete(name) {
+        request.cookies.delete(name);
+        supabaseResponse.cookies.delete(name);
+      }
+    }) as any;
+  } else {
+    supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+            supabaseResponse = NextResponse.next({
+              request,
+            })
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            )
+          },
+        },
+      }
+    )
+  }
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // getUser(). A simple mistake could make it very hard to debug

@@ -1,8 +1,28 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { createMockClient } from './mockClient'
 
 export async function createClient() {
   const cookieStore = await cookies()
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const isMockNeeded = !supabaseUrl || 
+    supabaseUrl.includes("mpwoecfookkoexalgmsr") || 
+    supabaseUrl.includes("your-project-url");
+
+  if (isMockNeeded) {
+    return createMockClient({
+      get(name) {
+        return cookieStore.get(name)?.value;
+      },
+      set(name, value, options) {
+        cookieStore.set(name, value, options);
+      },
+      delete(name) {
+        cookieStore.delete(name);
+      }
+    }) as any;
+  }
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,3 +47,4 @@ export async function createClient() {
     }
   )
 }
+

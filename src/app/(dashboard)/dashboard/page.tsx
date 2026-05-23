@@ -1,9 +1,32 @@
+"use client"
+
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeobrutalistButton } from "@/components/ui/NeobrutalistButton";
 import { Plus, FileText, BrainCircuit, Activity } from "lucide-react";
 import Link from "next/link";
+import { useToastStore } from "@/lib/toastStore";
 
 export default function DashboardPage() {
+  const toast = useToastStore(state => state.toast);
+
+  const handleGraphClick = () => {
+    toast({
+      title: "Neural Graph Offline",
+      message: "The 3D bioluminescent mapping grid is currently in development. AI agents are indexing the database to construct your semantic workspace nodes.",
+      type: "info",
+      duration: 5000
+    });
+  };
+
+  const handleChatClick = () => {
+    toast({
+      title: "Models on Standby",
+      message: "Multi-model synchronization is in development. Connectors for Claude 3.5, GPT-4o, and Llama 3 are undergoing calibration.",
+      type: "info",
+      duration: 5000
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -89,12 +112,18 @@ export default function DashboardPage() {
       <section>
         <h2 className="text-2xl font-black text-white mb-6">Upcoming Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <GlassPanel className="p-6 bg-white/[0.02] hover:bg-white/[0.05] transition-all border-dashed border-2 border-white/10 group">
-              <h4 className="font-bold text-[#00f7ff] group-hover:underline cursor-pointer">Visual Graph View</h4>
+           <GlassPanel 
+             onClick={handleGraphClick}
+             className="p-6 bg-white/[0.01] hover:bg-[#00f7ff]/5 active:scale-[0.98] cursor-pointer transition-all duration-300 border-dashed border-2 border-white/10 hover:border-[#00f7ff]/30 hover:shadow-[0_0_25px_rgba(0,247,255,0.08)] group"
+           >
+              <h4 className="font-bold text-[#00f7ff] group-hover:underline">Visual Graph View</h4>
               <p className="text-white/50 text-sm mt-1">Navigate your knowledge through a 3D bioluminescent node graph.</p>
            </GlassPanel>
-           <GlassPanel className="p-6 bg-white/[0.02] hover:bg-white/[0.05] transition-all border-dashed border-2 border-white/10 group">
-              <h4 className="font-bold text-[#6b00ff] group-hover:underline cursor-pointer">Multi-model Chat</h4>
+           <GlassPanel 
+             onClick={handleChatClick}
+             className="p-6 bg-white/[0.01] hover:bg-[#6b00ff]/5 active:scale-[0.98] cursor-pointer transition-all duration-300 border-dashed border-2 border-white/10 hover:border-[#6b00ff]/30 hover:shadow-[0_0_25px_rgba(107,0,255,0.08)] group"
+           >
+              <h4 className="font-bold text-[#6b00ff] group-hover:underline">Multi-model Chat</h4>
               <p className="text-white/50 text-sm mt-1">Switch between Claude 3.5, GPT-4o, and Llama 3 instantly.</p>
            </GlassPanel>
         </div>

@@ -196,7 +196,7 @@ export default function DocumentsPage() {
 
   return (
     <div 
-      className="flex gap-8 h-[calc(100vh-120px)] relative"
+      className="flex flex-col lg:flex-row gap-6 lg:gap-8 h-[calc(100vh-120px)] relative"
       onDragEnter={handleDragOver}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -211,7 +211,7 @@ export default function DocumentsPage() {
           </div>
         </div>
       )}
-      <aside className="w-64 flex-shrink-0 flex flex-col space-y-8 animate-in slide-in-from-left duration-500">
+      <aside className="hidden lg:flex w-64 flex-shrink-0 flex flex-col space-y-8 animate-in slide-in-from-left duration-500">
         <div className="space-y-4">
           <h2 className="text-[10px] uppercase font-black tracking-widest text-[#00f7ff]/50 px-2">Knowledge Base</h2>
           <nav className="space-y-1">
@@ -286,11 +286,30 @@ export default function DocumentsPage() {
           
           <button 
             onClick={handleUploadClick}
-            className="flex items-center gap-2 bg-[#00f7ff] text-black font-black px-8 py-3.5 rounded-2xl shadow-neobrutalist hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+            className="flex items-center gap-2 bg-[#00f7ff] text-black font-black px-8 py-3.5 rounded-2xl shadow-neobrutalist hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap animate-in fade-in duration-300"
           >
             <Plus className="w-5 h-5" />
             Upload Document
           </button>
+        </div>
+
+        {/* Mobile Horizontal Categories Pill Bar */}
+        <div className="lg:hidden flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={cn(
+                "flex-shrink-0 flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl border-2 border-black transition-all shadow-neobrutalist whitespace-nowrap",
+                selectedCategory === cat
+                  ? "bg-[#00f7ff] text-black"
+                  : "bg-white/5 text-white/70 hover:bg-white/10"
+              )}
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              {cat}
+            </button>
+          ))}
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
