@@ -116,14 +116,24 @@ export default function DashboardPage() {
              onClick={handleGraphClick}
              className="p-6 bg-white/[0.01] hover:bg-[#00f7ff]/5 active:scale-[0.98] cursor-pointer transition-all duration-300 border-dashed border-2 border-white/10 hover:border-[#00f7ff]/30 hover:shadow-[0_0_25px_rgba(0,247,255,0.08)] group"
            >
-              <h4 className="font-bold text-[#00f7ff] group-hover:underline">Visual Graph View</h4>
+              <h4 className="flex items-center gap-2 font-bold text-[#00f7ff]">
+                <span className="group-hover:underline">Visual Graph View</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]">
+                  Soon
+                </span>
+              </h4>
               <p className="text-white/50 text-sm mt-1">Navigate your knowledge through a 3D bioluminescent node graph.</p>
            </GlassPanel>
            <GlassPanel 
              onClick={handleChatClick}
              className="p-6 bg-white/[0.01] hover:bg-[#6b00ff]/5 active:scale-[0.98] cursor-pointer transition-all duration-300 border-dashed border-2 border-white/10 hover:border-[#6b00ff]/30 hover:shadow-[0_0_25px_rgba(107,0,255,0.08)] group"
            >
-              <h4 className="font-bold text-[#6b00ff] group-hover:underline">Multi-model Chat</h4>
+              <h4 className="flex items-center gap-2 font-bold text-[#6b00ff]">
+                <span className="group-hover:underline">Multi-model Chat</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]">
+                  Soon
+                </span>
+              </h4>
               <p className="text-white/50 text-sm mt-1">Switch between Claude 3.5, GPT-4o, and Llama 3 instantly.</p>
            </GlassPanel>
         </div>

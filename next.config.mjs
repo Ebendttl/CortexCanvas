@@ -3,6 +3,14 @@ import path from 'path';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['react-pdf', 'pdfjs-dist'],
+  images: {
+    remotePatterns: [],
+    localPatterns: [
+      {
+        pathname: '/uploads/**',
+      },
+    ],
+  },
   webpack: (config, { dev, isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,

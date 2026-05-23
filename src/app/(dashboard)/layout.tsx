@@ -5,6 +5,7 @@ import { useCommandPalette } from "@/lib/store";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ProfileAvatar } from "@/components/ProfileAvatar";
 
 export default function DashboardLayout({
   children,
@@ -75,7 +76,7 @@ export default function DashboardLayout({
              >
                 <span className="group-hover:text-[#00f7ff]">Cmd + K to search</span>
              </div>
-             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00f7ff] to-[#6b00ff] border-2 border-black shadow-neobrutalist"></div>
+             <ProfileAvatar />
           </div>
         </header>
 
