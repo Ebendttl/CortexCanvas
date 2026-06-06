@@ -43,6 +43,13 @@ This file serves as a persistent record of the architecture decisions, modificat
 * **File:** [start.sh](file:///home/ebendttl/portfolio-projects/CortexCanvas/start.sh)
 * **Actions:** Simplified entrypoint to run database schema synchronization (`npx prisma db push`) upon container launch before executing `next start`.
 
+### 6. Unified Authentication Bridge
+* **Files:** [src/app/(dashboard)/documents/actions.ts](file:///home/ebendttl/portfolio-projects/CortexCanvas/src/app/(dashboard)/documents/actions.ts) and [src/auth.ts](file:///home/ebendttl/portfolio-projects/CortexCanvas/src/auth.ts)
+* **Problem:** NextAuth was configured for OAuth, but email/password registration used Supabase. This mismatch prevented database queries from resolving correctly and threw 500/unauthorized errors because Supabase users weren't in the PostgreSQL `User` table, and NextAuth session endpoint lacked a config secret.
+* **Fix:**
+  - Added `secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET` to the NextAuth initialization block in `src/auth.ts` to prevent runtime configuration failures.
+  - Implemented a unified `getSession()` utility in `src/app/(dashboard)/documents/actions.ts` that tries NextAuth first, falls back to Supabase Auth, auto-upserts Supabase users into the PostgreSQL database, and falls back to development session on local environments.
+
 ---
 
 ## 🔑 Required Environment Variables
