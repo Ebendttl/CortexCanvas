@@ -7,12 +7,12 @@ services:
     numInstances: 1
     envVars:
       - key: DATABASE_URL
-        sync: true
+        sync: false
       - key: NEXTAUTH_SECRET
         generateValue: true
       - key: NEXTAUTH_URL
         value: https://cortex-canvas.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
-        sync: true
+        sync: false
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        sync: true
+        sync: false
