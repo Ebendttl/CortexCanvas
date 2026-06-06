@@ -5,18 +5,14 @@ services:
     plan: free
     branch: main
     numInstances: 1
-    disk:
-      name: cortex-storage
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: DATABASE_URL
-        value: file:/data/dev.db
+        sync: true
       - key: NEXTAUTH_SECRET
         generateValue: true
       - key: NEXTAUTH_URL
         value: https://cortex-canvas.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
-        value: https://mpwoecfookkoexalgmsr.supabase.co
+        sync: true
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wd29lY2Zvb2trb2V4YWxnbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NzY0MjQsImV4cCI6MjA5MDI1MjQyNH0.up1A49_qm3mintRDIKyCQDvijS9pPmnC4k16jHdxBlg
+        sync: true

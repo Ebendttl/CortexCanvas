@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,17 +29,48 @@ export async function POST(req: NextRequest) {
 
     const ext = file.name.split(".").pop() ?? "jpg";
     const filename = `avatar-${Date.now()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
 
-    // Ensure the directory exists
-    await mkdir(uploadDir, { recursive: true });
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const isMock = !supabaseUrl || 
+      supabaseUrl.includes("mpwoecfookkoexalgmsr") || 
+      supabaseUrl.includes("your-project-url");
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filePath = path.join(uploadDir, filename);
-    await writeFile(filePath, buffer);
+    if (isMock) {
+      // Local development - write to public disk
+      const { writeFile, mkdir } = await import("fs/promises");
+      const path = await import("path");
+      const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
 
-    const publicUrl = `/uploads/avatars/${filename}`;
-    return NextResponse.json({ url: publicUrl }, { status: 200 });
+      await mkdir(uploadDir, { recursive: true });
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const filePath = path.join(uploadDir, filename);
+      await writeFile(filePath, buffer);
+
+      const publicUrl = `/uploads/avatars/${filename}`;
+      return NextResponse.json({ url: publicUrl }, { status: 200 });
+    } else {
+      // Production / Cloud - upload to Supabase Storage bucket 'avatars'
+      const supabase = await createClient();
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(filename, buffer, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (error) {
+        console.error("[SUPABASE_STORAGE_ERROR]", error);
+        return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filename);
+
+      return NextResponse.json({ url: publicUrl }, { status: 200 });
+    }
   } catch (err) {
     console.error("[AVATAR_UPLOAD_ERROR]", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

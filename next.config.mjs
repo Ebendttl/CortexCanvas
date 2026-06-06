@@ -4,7 +4,18 @@ import path from 'path';
 const nextConfig = {
   transpilePackages: ['react-pdf', 'pdfjs-dist'],
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        pathname: '/**',
+      },
+    ],
     localPatterns: [
       {
         pathname: '/uploads/**',
