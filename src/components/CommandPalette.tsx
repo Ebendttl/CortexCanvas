@@ -67,6 +67,8 @@ export function CommandPalette() {
   // Global keyboard handler
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (!e.key) return
+
       // Cmd/Ctrl + K → toggle
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
