@@ -1,8 +1,19 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Only initialize Resend when the API key is configured.
+// Without this guard, the module crashes at import time on Render
+// (where RESEND_API_KEY is not set), breaking ALL server actions
+// in any file that imports this module.
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 export async function sendWelcomeEmail(email: string) {
+  if (!resend) {
+    console.warn('RESEND_API_KEY not configured — skipping welcome email');
+    return { success: false, error: 'Email service not configured' };
+  }
+
   try {
     const { data, error } = await resend.emails.send({
       from: 'CortexCanvas <onboarding@resend.dev>', // Replace with your verified domain
