@@ -6,6 +6,7 @@ import mammoth from "mammoth";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { auth } from "@/auth";
+import { createClient as createSupabaseClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import fs from "fs/promises";
@@ -54,14 +55,55 @@ async function getDevSession() {
   };
 }
 
+async function getSession() {
+  // 1. Try NextAuth (Google/GitHub oauth)
+  let session = await auth();
+  if (session?.user?.id) {
+    return session;
+  }
+
+  // 2. Try Supabase Auth (Email/Password credentials)
+  try {
+    const supabase = await createSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      // Sync user to PostgreSQL DB
+      const dbUser = await (prisma as any).user.upsert({
+        where: { email: user.email! },
+        update: {},
+        create: {
+          id: user.id,
+          email: user.email!,
+          name: user.email!.split("@")[0],
+          image: `https://api.dicebear.com/7.x/bottts/svg?seed=${user.id}`,
+        },
+      });
+
+      return {
+        user: {
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          image: dbUser.image,
+        }
+      };
+    }
+  } catch (error) {
+    console.error("SERVER: Failed to fetch Supabase user session", error);
+  }
+
+  // 3. Fallback to Local Dev Session
+  if (process.env.NODE_ENV === "development") {
+    return await getDevSession();
+  }
+
+  return null;
+}
+
 export async function handleDelete(id: string) {
   await checkDatabaseConnection();
   const headerList = await headers(); // Next.js 15 async compliance
-  let session = await auth();
-
-  if (!session?.user?.id && process.env.NODE_ENV === "development") {
-    session = await getDevSession() as any;
-  }
+  const session = await getSession();
 
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -90,12 +132,7 @@ export async function uploadDocument(formData: FormData) {
   console.log("SERVER: uploadDocument started");
   await checkDatabaseConnection();
   const headerList = await headers(); // Next.js 15 async compliance
-  let session = await auth();
-  
-  if (!session?.user?.id && process.env.NODE_ENV === "development") {
-    console.warn("SERVER: No session found, using DEV fallback");
-    session = await getDevSession() as any;
-  }
+  const session = await getSession();
 
   if (!session?.user?.id) {
     console.error("SERVER: Unauthorized upload attempt - Session missing or auth failed");
@@ -157,11 +194,7 @@ export async function getDocuments() {
   try {
     await checkDatabaseConnection();
     const headerList = await headers(); // Next.js 15 async compliance
-    let session = await auth();
-
-    if (!session?.user?.id && process.env.NODE_ENV === "development") {
-      session = await getDevSession() as any;
-    }
+    const session = await getSession();
 
     if (!session?.user?.id) return [];
 
